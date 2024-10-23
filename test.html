@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<input id="fileInput" type="file"/>
+<script>
+    // 假设你已经从后端接收到了预签名的 URL
+    const uploadUrl = 'http://127.0.0.1:9000/my-bucket/your-object.txt?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=DZE5m2kAfBXvYEMpy7Hq%2F20241023%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20241023T072109Z&X-Amz-Expires=600&X-Amz-SignedHeaders=host&X-Amz-Signature=1c29e01eef6127bb3d8db69958f384be033cfd802cbd4a1767768327e2596f18';
+    const fileInput = document.getElementById('fileInput'); // 假设你有一个文件输入元素
+
+    fileInput.addEventListener('change', async (event) => {
+        const file = event.target.files[0];
+        try {
+            const response = await fetch(uploadUrl, {
+                headers: {
+                    'Content-Type': file.type,
+                },
+                method: 'PUT',
+                body: file,
+            });
+            if (response.ok) {
+                console.log('File uploaded successfully!');
+            } else {
+                console.error('Failed to upload file:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error uploading file:', error);
+        }
+    });
+</script>
+</body>
+</html>
