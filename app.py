@@ -2,16 +2,21 @@ from datetime import timedelta
 from flask import Flask, jsonify, request
 from minio import Minio
 from minio.error import S3Error
+from pymongo import MongoClient
 
 app = Flask(__name__)
 
 # MinIO服务器地址和端口
 minio_client = Minio(
-    "127.0.0.1:9000",
+    "hmz-minio.vip.cpolar.cn",
     access_key="DZE5m2kAfBXvYEMpy7Hq",
     secret_key="ckoOgc8YPFz5gyldV1ZxpYw2kPPOLgdWuFeLbMZo",
-    secure=False
+    # secure=False
 )
+
+client = MongoClient("mongodb://localhost:27017/")
+
+db = client["document"]
 
 
 class JsonResponse:
@@ -34,9 +39,9 @@ class JsonResponse:
 # 生成预签名上传 URL 的函数
 @app.route('/generate_presign_upload_url')
 def generate_presign_upload_url():
-    bucket_name = request.args.get('bucket_name')
-    object_name = request.args.get('object_name')
     try:
+        bucket_name = request.args.get('bucket_name')
+        object_name = request.args.get('object_name')
         # 生成预签名 URL
         url = minio_client.presigned_put_object(
             bucket_name,
